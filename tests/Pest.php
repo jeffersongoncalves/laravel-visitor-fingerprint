@@ -1,3 +1,5 @@
 <?php
 
-uses(JeffersonGoncalves\VisitorFingerprint\Tests\TestCase::class)->in('Feature', 'Unit');
+use JeffersonGoncalves\VisitorFingerprint\Tests\TestCase;
+
+uses(TestCase::class)->in('Feature', 'Unit');

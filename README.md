@@ -1,12 +1,18 @@
 <div class="filament-hidden">
 
-<!-- banner: art/jeffersongoncalves-laravel-visitor-fingerprint.png (generate via portfolio-banner skill) -->
+![Laravel Visitor Fingerprint](https://raw.githubusercontent.com/jeffersongoncalves/laravel-visitor-fingerprint/main/art/jeffersongoncalves-laravel-visitor-fingerprint.png)
 
 </div>
 
-# VisitorFingerprint
+# Laravel Visitor Fingerprint
 
-A zero-domain-knowledge visitor-fingerprinting toolkit for Laravel: device/browser/OS detection, IP anonymization, bot detection, GeoIP, VPN/proxy/Tor detection, and GDPR export/erasure
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/jeffersongoncalves/laravel-visitor-fingerprint.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/laravel-visitor-fingerprint)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-visitor-fingerprint/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/actions?query=workflow%3ATests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-visitor-fingerprint/pint.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/actions?query=workflow%3A%22Fix+PHP+code+styling%22+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/jeffersongoncalves/laravel-visitor-fingerprint.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/laravel-visitor-fingerprint)
+[![License](https://img.shields.io/packagist/l/jeffersongoncalves/laravel-visitor-fingerprint.svg?style=flat-square)](LICENSE.md)
+
+A zero-domain-knowledge visitor-fingerprinting toolkit for Laravel: given an HTTP request, safely identify device/browser/OS, anonymize/hash the IP, detect bots, resolve GeoIP, detect VPN/proxy/Tor, and support GDPR export/erasure. This package has no concept of "short URL" or "page visit" — those are concerns of the packages that consume it.
 
 ## Installation
 
@@ -16,10 +22,90 @@ You can install the package via composer:
 composer require jeffersongoncalves/laravel-visitor-fingerprint
 ```
 
+Optionally publish the config file:
+
+```bash
+php artisan vendor:publish --tag="visitor-fingerprint-config"
+```
+
 ## Usage
 
+### User agent, bot, language, referer
+
 ```php
-// TODO
+use JeffersonGoncalves\VisitorFingerprint\Facades\VisitorFingerprint;
+
+VisitorFingerprint::deviceType($request->userAgent());     // 'desktop' | 'mobile' | 'tablet'
+VisitorFingerprint::parseUserAgent($request->userAgent());  // ['browser' => 'Chrome', 'browser_version' => '128.0.0.0', 'operating_system' => 'Windows', 'operating_system_version' => '10.0']
+VisitorFingerprint::isBot($request->userAgent());           // bool
+
+VisitorFingerprint::preferredLanguage($request->header('Accept-Language'));  // 'en-US'
+VisitorFingerprint::classifyReferer($request->header('Referer'), $request->getHost()); // 'social' | 'search' | 'email' | 'internal' | 'direct'
+```
+
+### IP anonymization and hashing
+
+```php
+use JeffersonGoncalves\VisitorFingerprint\Support\IpAnonymizer;
+
+IpAnonymizer::truncate($request->ip()); // '203.0.113.0' (IPv4 /24) or '2001:0db8:1234::' (IPv6 /48)
+IpAnonymizer::hash($request->ip());     // salted sha256, safe to store for uniqueness comparisons
+IpAnonymizer::version($request->ip());  // 4 or 6
+```
+
+### GeoIP
+
+```php
+use JeffersonGoncalves\VisitorFingerprint\Facades\VisitorFingerprint;
+
+$location = VisitorFingerprint::geoLocate($request->ip());
+$location->country; $location->city; $location->latitude; $location->longitude;
+```
+
+Driver is selected via `visitor-fingerprint.geoip.driver`: `headers` (trusts CDN-injected geo headers, e.g. Cloudflare/CloudFront), `ip_api` (free-tier `ip-api.com` HTTP lookup), or `maxmind` (local MaxMind database, requires `geoip2/geoip2`).
+
+### VPN / proxy / Tor detection
+
+```php
+use JeffersonGoncalves\VisitorFingerprint\Facades\VisitorFingerprint;
+
+$threat = VisitorFingerprint::checkThreat($request->ip());
+$threat->isVpn; $threat->isProxy; $threat->isTor; $threat->isDatacenter; $threat->confidence;
+```
+
+Driver is selected via `visitor-fingerprint.vpn_detection.driver`: `ip_api` or `proxycheck`. Both are best-effort — any lookup failure yields a "clean" result instead of raising, and results are cached per IP.
+
+### GDPR / LGPD export and erasure
+
+`PersonalDataExporter` is reusable against any consumer's own visit-like Eloquent model — this package has no model of its own:
+
+```php
+use JeffersonGoncalves\VisitorFingerprint\Compliance\PersonalDataExporter;
+
+$exporter = new PersonalDataExporter(\App\Models\Visit::class, ipHashColumn: 'ip_hash');
+
+$exporter->exportForIp($ip);  // rows matching the hashed IP, as arrays
+$exporter->forgetForIp($ip);  // nulls only the PII columns that exist on the model's table
+```
+
+## Configuration
+
+```php
+// config/visitor-fingerprint.php
+return [
+    'hash_salt' => env('VISITOR_FINGERPRINT_HASH_SALT', config('app.key')),
+
+    'geoip' => [
+        'driver' => env('VISITOR_FINGERPRINT_GEOIP_DRIVER', 'headers'),
+        'maxmind_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_DB_PATH'),
+    ],
+
+    'vpn_detection' => [
+        'driver' => env('VISITOR_FINGERPRINT_VPN_DRIVER', 'ip_api'),
+        'proxycheck_api_key' => env('VISITOR_FINGERPRINT_PROXYCHECK_API_KEY'),
+        'cache_ttl' => env('VISITOR_FINGERPRINT_VPN_CACHE_TTL', 3600),
+    ],
+];
 ```
 
 ## Testing
@@ -42,7 +128,7 @@ If you discover any security related issues, please email the author instead of 
 
 ## Credits
 
-- [jeffersongoncalves](https://github.com/jeffersongoncalves)
+- [Jefferson Gonçalves](https://github.com/jeffersongoncalves)
 - [All Contributors](../../contributors)
 
 ## License
