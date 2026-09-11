@@ -27,13 +27,18 @@ return [
     |   - ip_api: free-tier ip-api.com HTTP lookup.
     |   - maxmind: reads a local MaxMind GeoLite2/GeoIP2 database (requires
     |     the optional geoip2/geoip2 package).
-    | - maxmind_database_path: filesystem path to the MaxMind database,
-    |   only read when driver is "maxmind".
+    | - maxmind_database_path: filesystem path to the MaxMind database, only
+    |   read when driver is "maxmind". Defaults to the same location
+    |   jeffersongoncalves/laravel-short-url's config defaults to
+    |   (storage/app/geoip/GeoLite2-City.mmdb) so an app already running a
+    |   scheduled `geoip:update`-style download for that package doesn't
+    |   need to duplicate the file or set this — both packages just read
+    |   the one database off disk.
     |
     */
     'geoip' => [
         'driver' => env('VISITOR_FINGERPRINT_GEOIP_DRIVER', 'headers'),
-        'maxmind_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_DB_PATH'),
+        'maxmind_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_DB_PATH', storage_path('app/geoip/GeoLite2-City.mmdb')),
     ],
 
     /*
