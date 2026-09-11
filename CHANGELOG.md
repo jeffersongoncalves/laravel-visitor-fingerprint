@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.1 - 2026-09-11
+
+Fixed
+
+- geoip.maxmind_database_path now defaults to
+  storage_path('app/geoip/GeoLite2-City.mmdb') instead of null, matching
+  jeffersongoncalves/laravel-short-url's config default. An app already
+  running a scheduled MaxMind download for short-url gets GeoIP working
+  here too without setting VISITOR_FINGERPRINT_MAXMIND_DB_PATH — both
+  packages read the same database file off disk.
+
 ## 1.0.0 - 2026-09-11
 
 Initial release.
