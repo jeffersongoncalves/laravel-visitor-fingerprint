@@ -1,0 +1,71 @@
+{
+    "name": "jeffersongoncalves/laravel-visitor-fingerprint",
+    "description": "A zero-domain-knowledge visitor-fingerprinting toolkit for Laravel: device/browser/OS detection, IP anonymization, bot detection, GeoIP, VPN/proxy/Tor detection, and GDPR export/erasure",
+    "keywords": [
+        "laravel",
+        "fingerprint",
+        "visitor",
+        "geoip",
+        "vpn-detection",
+        "bot-detection",
+        "gdpr"
+    ],
+    "homepage": "https://github.com/jeffersongoncalves/laravel-visitor-fingerprint",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Jefferson Gonçalves",
+            "email": "gerson.simao.92@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "spatie/laravel-package-tools": "^1.16",
+        "illuminate/contracts": "^12.0|^13.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.24",
+        "orchestra/testbench": "^10.0|^11.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0|^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JeffersonGoncalves\\VisitorFingerprint\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JeffersonGoncalves\\VisitorFingerprint\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint",
+        "analyse": "vendor/bin/phpstan analyse"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JeffersonGoncalves\\VisitorFingerprint\\VisitorFingerprintServiceProvider"
+            ],
+            "aliases": {
+                "VisitorFingerprint": "JeffersonGoncalves\\VisitorFingerprint\\Facades\\VisitorFingerprint"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
