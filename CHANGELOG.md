@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.3 - 2026-09-12
+
+Move the geoip:update MaxMind database download command into this package.
+
+Previously app-owned, tightly coupled to this package's own config keys/driver. Now auto-registered via the service provider — a consuming app just schedules 'geoip:update', no custom command needed. License key config falls back to the plain MAXMIND_LICENSE_KEY env var.
+
 ## 1.0.2 - 2026-09-12
 
 Populate isp/asn when using the maxmind geoip driver.
