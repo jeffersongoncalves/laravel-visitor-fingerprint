@@ -44,6 +44,15 @@ return [
         'driver' => env('VISITOR_FINGERPRINT_GEOIP_DRIVER', 'headers'),
         'maxmind_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_DB_PATH', storage_path('app/geoip/GeoLite2-City.mmdb')),
         'maxmind_asn_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_ASN_DB_PATH', storage_path('app/geoip/GeoLite2-ASN.mmdb')),
+
+        /*
+         * Free account + license key: https://www.maxmind.com/en/geolite2/signup-form
+         * Used by the `geoip:update` command this package registers to download
+         * and install both databases above. Falls back to the plain
+         * MAXMIND_LICENSE_KEY name so an app already setting that for another
+         * purpose doesn't need a second env var.
+         */
+        'maxmind_license_key' => env('VISITOR_FINGERPRINT_MAXMIND_LICENSE_KEY', env('MAXMIND_LICENSE_KEY')),
     ],
 
     /*

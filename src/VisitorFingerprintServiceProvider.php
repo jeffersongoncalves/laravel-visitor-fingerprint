@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\VisitorFingerprint;
 
+use JeffersonGoncalves\VisitorFingerprint\Console\Commands\UpdateMaxMindDatabasesCommand;
 use JeffersonGoncalves\VisitorFingerprint\Contracts\GeoIpDriver;
 use JeffersonGoncalves\VisitorFingerprint\Contracts\VpnDetectionDriver;
 use JeffersonGoncalves\VisitorFingerprint\GeoIp\HeadersGeoIpDriver;
@@ -18,7 +19,8 @@ class VisitorFingerprintServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('laravel-visitor-fingerprint')
-            ->hasConfigFile('visitor-fingerprint');
+            ->hasConfigFile('visitor-fingerprint')
+            ->hasCommand(UpdateMaxMindDatabasesCommand::class);
     }
 
     public function packageRegistered(): void
