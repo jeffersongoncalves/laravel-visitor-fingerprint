@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.2 - 2026-09-12
+
+Populate isp/asn when using the maxmind geoip driver.
+
+GeoLite2-City has no ISP/ASN fields — MaxMindGeoIpDriver now also reads an optional separate GeoLite2-ASN database (visitor-fingerprint.geoip.maxmind_asn_database_path) to fill isp/asn, matching the ip_api driver's shape. Missing ASN database degrades to the prior city-only behavior, no error.
+
 ## 1.0.1 - 2026-09-11
 
 Fixed
