@@ -60,9 +60,25 @@ use JeffersonGoncalves\VisitorFingerprint\Facades\VisitorFingerprint;
 
 $location = VisitorFingerprint::geoLocate($request->ip());
 $location->country; $location->city; $location->latitude; $location->longitude;
+$location->isp; $location->asn; // only populated by the ip_api driver, or the maxmind driver when an ASN database is configured (see below)
 ```
 
-Driver is selected via `visitor-fingerprint.geoip.driver`: `headers` (trusts CDN-injected geo headers, e.g. Cloudflare/CloudFront), `ip_api` (free-tier `ip-api.com` HTTP lookup), or `maxmind` (local MaxMind database, requires `geoip2/geoip2`).
+Driver is selected via `visitor-fingerprint.geoip.driver`: `headers` (trusts CDN-injected geo headers, e.g. Cloudflare/CloudFront — no isp/asn), `ip_api` (free-tier `ip-api.com` HTTP lookup, includes isp/asn), or `maxmind` (local MaxMind database, requires `geoip2/geoip2`).
+
+The `maxmind` driver reads two **separate** MaxMind databases: GeoLite2-City (country/region/city/coordinates) has no ISP/ASN fields at all — those only exist in GeoLite2-ASN. Configure both paths and this package's own `geoip:update` command keeps them fresh:
+
+```bash
+php artisan geoip:update
+```
+
+Downloads and installs both editions with your MaxMind license key (`visitor-fingerprint.geoip.maxmind_license_key`, falls back to plain `MAXMIND_LICENSE_KEY`). Each edition is independent — a failure on one doesn't block the other from updating, and a failed run never touches the last-known-good file. Schedule it, e.g.:
+
+```php
+// routes/console.php
+Schedule::command('geoip:update')->weeklyOn(1, '02:00');
+```
+
+The ASN database is optional — without it (or with the `headers`/`ip_api` driver), isp/asn just stay `null`, same best-effort behavior as everything else in this package.
 
 ### VPN / proxy / Tor detection
 
@@ -97,7 +113,9 @@ return [
 
     'geoip' => [
         'driver' => env('VISITOR_FINGERPRINT_GEOIP_DRIVER', 'headers'),
-        'maxmind_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_DB_PATH'),
+        'maxmind_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_DB_PATH', storage_path('app/geoip/GeoLite2-City.mmdb')),
+        'maxmind_asn_database_path' => env('VISITOR_FINGERPRINT_MAXMIND_ASN_DB_PATH', storage_path('app/geoip/GeoLite2-ASN.mmdb')),
+        'maxmind_license_key' => env('VISITOR_FINGERPRINT_MAXMIND_LICENSE_KEY', env('MAXMIND_LICENSE_KEY')),
     ],
 
     'vpn_detection' => [
