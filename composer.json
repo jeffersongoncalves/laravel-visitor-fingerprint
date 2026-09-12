@@ -26,6 +26,7 @@
         "illuminate/contracts": "^12.0|^13.0"
     },
     "require-dev": {
+        "geoip2/geoip2": "^3.4",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
         "orchestra/testbench": "^10.0|^11.0",
