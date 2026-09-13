@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.4 - 2026-09-13
+
+### What's Changed
+
+* fix: make VPN detection timeout configurable, stop logging expected timeouts as errors by @jeffersongoncalves in https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/pull/3
+
+### New Contributors
+
+* @jeffersongoncalves made their first contribution in https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/pull/3
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/compare/1.0.3...1.0.4
+
 ## 1.0.3 - 2026-09-12
 
 Move the geoip:update MaxMind database download command into this package.
