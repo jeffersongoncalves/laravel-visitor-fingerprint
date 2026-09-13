@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\VisitorFingerprint\VpnDetection;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\VisitorFingerprint\Contracts\VpnDetectionDriver;
@@ -28,7 +29,7 @@ class IpApiVpnDetectionDriver implements VpnDetectionDriver
     protected function lookup(string $ip): ThreatResult
     {
         try {
-            $response = Http::timeout(0.8)
+            $response = Http::timeout((float) config('visitor-fingerprint.vpn_detection.timeout', 2.0))
                 ->get("http://ip-api.com/json/{$ip}", ['fields' => 'status,proxy,hosting']);
 
             if (! $response->successful() || $response->json('status') !== 'success') {
@@ -44,6 +45,8 @@ class IpApiVpnDetectionDriver implements VpnDetectionDriver
                 confidence: $isProxy || $isDatacenter ? 0.6 : 0.0,
                 provider: 'ip_api',
             );
+        } catch (ConnectionException) {
+            return new ThreatResult(provider: 'ip_api');
         } catch (Throwable $e) {
             report($e);
 

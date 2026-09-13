@@ -122,6 +122,7 @@ return [
         'driver' => env('VISITOR_FINGERPRINT_VPN_DRIVER', 'ip_api'),
         'proxycheck_api_key' => env('VISITOR_FINGERPRINT_PROXYCHECK_API_KEY'),
         'cache_ttl' => env('VISITOR_FINGERPRINT_VPN_CACHE_TTL', 3600),
+        'timeout' => env('VISITOR_FINGERPRINT_VPN_TIMEOUT', 2.0),
     ],
 ];
 ```

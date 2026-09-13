@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\VisitorFingerprint\VpnDetection;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\VisitorFingerprint\Contracts\VpnDetectionDriver;
@@ -29,7 +30,8 @@ class ProxyCheckVpnDetectionDriver implements VpnDetectionDriver
             $apiKey = config('visitor-fingerprint.vpn_detection.proxycheck_api_key');
             $query = array_filter(['vpn' => 1, 'asn' => 1, 'key' => $apiKey]);
 
-            $response = Http::timeout(0.8)->get("https://proxycheck.io/v2/{$ip}", $query);
+            $response = Http::timeout((float) config('visitor-fingerprint.vpn_detection.timeout', 2.0))
+                ->get("https://proxycheck.io/v2/{$ip}", $query);
 
             if (! $response->successful()) {
                 return new ThreatResult(provider: 'proxycheck_io');
@@ -52,6 +54,8 @@ class ProxyCheckVpnDetectionDriver implements VpnDetectionDriver
                 confidence: 0.8,
                 provider: 'proxycheck_io',
             );
+        } catch (ConnectionException) {
+            return new ThreatResult(provider: 'proxycheck_io');
         } catch (Throwable $e) {
             report($e);
 

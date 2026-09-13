@@ -66,12 +66,17 @@ return [
     | - proxycheck_api_key: optional key for proxycheck.io (works keyless,
     |   rate-limited, on the free tier).
     | - cache_ttl: seconds a per-IP lookup result is cached for.
+    | - timeout: seconds to wait for the third-party API before giving up
+    |   and returning a "clean" result. Short enough to not meaningfully
+    |   delay the caller, generous enough to not trip on every minor
+    |   latency blip against a free-tier API.
     |
     */
     'vpn_detection' => [
         'driver' => env('VISITOR_FINGERPRINT_VPN_DRIVER', 'ip_api'),
         'proxycheck_api_key' => env('VISITOR_FINGERPRINT_PROXYCHECK_API_KEY'),
         'cache_ttl' => env('VISITOR_FINGERPRINT_VPN_CACHE_TTL', 3600),
+        'timeout' => env('VISITOR_FINGERPRINT_VPN_TIMEOUT', 2.0),
     ],
 
 ];
