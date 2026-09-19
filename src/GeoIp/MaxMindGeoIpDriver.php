@@ -3,6 +3,7 @@
 namespace JeffersonGoncalves\VisitorFingerprint\GeoIp;
 
 use GeoIp2\Database\Reader;
+use GeoIp2\Exception\AddressNotFoundException;
 use JeffersonGoncalves\VisitorFingerprint\Contracts\GeoIpDriver;
 use JeffersonGoncalves\VisitorFingerprint\Data\GeoLocation;
 use Throwable;
@@ -45,6 +46,8 @@ class MaxMindGeoIpDriver implements GeoIpDriver
                 isp: $isp,
                 asn: $asn,
             );
+        } catch (AddressNotFoundException) {
+            return new GeoLocation;
         } catch (Throwable $e) {
             report($e);
 
@@ -69,6 +72,8 @@ class MaxMindGeoIpDriver implements GeoIpDriver
                 : null;
 
             return [$record->autonomousSystemOrganization, $asn];
+        } catch (AddressNotFoundException) {
+            return [null, null];
         } catch (Throwable $e) {
             report($e);
 
