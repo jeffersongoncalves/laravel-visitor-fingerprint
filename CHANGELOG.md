@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.5 - 2026-09-19
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/compare/1.0.4...1.0.5
+
 ## 1.0.4 - 2026-09-13
 
 ### What's Changed
