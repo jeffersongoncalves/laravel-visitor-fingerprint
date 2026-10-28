@@ -41,11 +41,13 @@ class BotDetector
 
     /**
      * Truncated scraper UAs name a rendering engine but no browser product.
-     * iOS WKWebView / in-app browsers end in "Mobile/<build>" without "Safari/".
+     * iOS WKWebView / in-app browsers end in "Mobile/<build>" without "Safari/";
+     * macOS WKWebView sends the bare "AppleWebKit/... (KHTML, like Gecko)" form.
      */
     protected static function lacksBrowserProduct(string $needle): bool
     {
-        if (str_contains($needle, 'applewebkit/') && ! preg_match('#chrome/|crios/|safari/|version/|mobile/#', $needle)) {
+        // ponytail: Macintosh exempt wholesale, so truncated Mac-platform scraper UAs pass
+        if (str_contains($needle, 'applewebkit/') && ! str_contains($needle, 'macintosh') && ! preg_match('#chrome/|crios/|safari/|version/|mobile/#', $needle)) {
             return true;
         }
 
