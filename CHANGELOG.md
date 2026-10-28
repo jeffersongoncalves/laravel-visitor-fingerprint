@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.7 - 2026-10-28
+
+### Fixed
+
+- `BotDetector` flags truncated user-agents that name a rendering engine but no browser product (e.g. `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36`). iOS/macOS WKWebView, Instagram/Facebook in-app and Android WebView stay human. (#11, #12)
+
 ## 1.0.6 - 2026-10-28
 
 ### Fixed
