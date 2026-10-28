@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.6 - 2026-10-28
+
+### Fixed
+
+- `BotDetector::isBot()` now flags user agents claiming an obsolete browser version: Internet Explorer (`MSIE`/`Trident`), Chrome < 80 and Firefox < 70. Thresholds live in `BotDetector::MIN_MAJOR_VERSIONS`. Chrome/Firefox on iOS, Opera, Samsung Internet and Edge with current versions stay human. (#9, #10)
+
+### CI
+
+- Standardized tests workflow and Dependabot config; auto-merge for github-actions minor/patch updates only. (#5, #6, #7, #8)
+
 ## 1.0.5 - 2026-09-19
 
 **Full Changelog**: https://github.com/jeffersongoncalves/laravel-visitor-fingerprint/compare/1.0.4...1.0.5
