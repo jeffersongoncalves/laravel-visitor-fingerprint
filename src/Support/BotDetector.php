@@ -36,7 +36,20 @@ class BotDetector
             }
         }
 
-        return self::claimsObsoleteBrowser($needle);
+        return self::claimsObsoleteBrowser($needle) || self::lacksBrowserProduct($needle);
+    }
+
+    /**
+     * Truncated scraper UAs name a rendering engine but no browser product.
+     * iOS WKWebView / in-app browsers end in "Mobile/<build>" without "Safari/".
+     */
+    protected static function lacksBrowserProduct(string $needle): bool
+    {
+        if (str_contains($needle, 'applewebkit/') && ! preg_match('#chrome/|crios/|safari/|version/|mobile/#', $needle)) {
+            return true;
+        }
+
+        return preg_match('#gecko/\d#', $needle) === 1 && ! preg_match('#firefox/|fxios/#', $needle);
     }
 
     protected static function claimsObsoleteBrowser(string $needle): bool
