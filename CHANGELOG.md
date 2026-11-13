@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.0 - 2026-11-13
+
+### Fixed
+
+- `RefererClassifier` strips `www.` from the app host too. Same-site referers on apps served from `www.` now classify as `internal` instead of `direct`. (#15, #16)
+- Referer domains match exactly or by subdomain suffix, not by substring. Forged hosts (`www.google.<site-tld>`) and look-alikes (`microsoft.com` via `t.co`, `reddit.com.evil.io`) no longer count as `search`/`social`. (#15, #16)
+
+### Added
+
+- Explicit lists of real search, social and email domains, including regional Google domains.
+- Config key `visitor-fingerprint.referer_domains.{social,search,email}` adds extra domains to the built-in lists.
+
 ## 1.0.7 - 2026-10-28
 
 ### Fixed
