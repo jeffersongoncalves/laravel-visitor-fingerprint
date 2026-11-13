@@ -79,4 +79,20 @@ return [
         'timeout' => env('VISITOR_FINGERPRINT_VPN_TIMEOUT', 2.0),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Referer Domains
+    |--------------------------------------------------------------------------
+    |
+    | Extra domains merged into RefererClassifier's built-in lists. A referer
+    | host matches when it equals the domain or is a subdomain of it, e.g.
+    | 'google.com.co' matches 'www.google.com.co' but not 'google.com.co.evil.io'.
+    |
+    */
+    'referer_domains' => [
+        'social' => [],
+        'search' => [],
+        'email' => [],
+    ],
+
 ];
